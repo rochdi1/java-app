@@ -63,7 +63,9 @@ pipeline {
         stage('7. User Acceptance Tests') {
             agent { docker { image 'curlimages/curl:latest' } }
             steps {
+
                 //sh 'curl -I http://cluster.local || true'
+
             }
         }
 
