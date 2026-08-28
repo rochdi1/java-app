@@ -14,17 +14,18 @@ pipeline {
 
         stage('2. Build') {
             agent { 
-                docker { image 'FROM maven:3.9.16-eclipse-temurin-25-alpine' } 
+                // KORRIGIERT: 'FROM ' wurde entfernt
+                docker { image 'maven:3.9.16-eclipse-temurin-25-alpine' } 
             }
             steps {
-                // Hier funktioniert 'mvn' jetzt garantiert, da es im Container vorinstalliert ist!
                 sh 'mvn clean compile'
             }
         }
 
         stage('3. Unit Tests') {
             agent { 
-                docker { image 'FROM maven:3.9.16-eclipse-temurin-25-alpine' } 
+                // KORRIGIERT: 'FROM ' wurde entfernt
+                docker { image 'maven:3.9.16-eclipse-temurin-25-alpine' } 
             }
             steps {
                 sh 'mvn test'
@@ -33,7 +34,8 @@ pipeline {
 
         stage('4. SonarQube Analysis') {
             agent { 
-                docker { image 'FROM maven:3.9.16-eclipse-temurin-25-alpine' } 
+                // KORRIGIERT: 'FROM ' wurde entfernt
+                docker { image 'maven:3.9.16-eclipse-temurin-25-alpine' } 
             }
             steps {
                 sh "mvn sonar:sonar -Dsonar.host.url=${SONAR_URL}"
@@ -42,7 +44,6 @@ pipeline {
 
         stage('5. Package') {
             steps {
-                // Das Paketieren des Docker-Images läuft wieder auf dem Host-Socket
                 sh 'docker build -t java-app:${BUILD_NUMBER} .'
                 sh 'docker tag java-app:${BUILD_NUMBER} java-app:latest'
             }
@@ -64,8 +65,6 @@ pipeline {
             agent { docker { image 'curlimages/curl:latest' } }
             steps {
                 echo 'User Acceptance Tests...'
-                //sh 'curl -I http://cluster.local || true'
-
             }
         }
 
@@ -77,4 +76,3 @@ pipeline {
         }
     }
 }
-
