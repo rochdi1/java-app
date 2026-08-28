@@ -14,7 +14,8 @@ pipeline {
 
         stage('2. Build') {
             agent { 
-                docker { image 'maven:3.9.9-eclipse-temurin-25-alpine' } 
+                docker { image 'FROM maven:3.9.16-eclipse-temurin-25-alpine
+' } 
             }
             steps {
                 // Hier funktioniert 'mvn' jetzt garantiert, da es im Container vorinstalliert ist!
@@ -24,7 +25,8 @@ pipeline {
 
         stage('3. Unit Tests') {
             agent { 
-                docker { image 'maven:3.9.9-eclipse-temurin-25-alpine' } 
+                docker { image 'FROM maven:3.9.16-eclipse-temurin-25-alpine
+' } 
             }
             steps {
                 sh 'mvn test'
@@ -33,7 +35,8 @@ pipeline {
 
         stage('4. SonarQube Analysis') {
             agent { 
-                docker { image 'maven:3.9.9-eclipse-temurin-25-alpine' } 
+                docker { image 'FROM maven:3.9.16-eclipse-temurin-25-alpine
+' } 
             }
             steps {
                 sh "mvn sonar:sonar -Dsonar.host.url=${SONAR_URL}"
