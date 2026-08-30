@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONAR_URL = 'http://localhost:9000'
+        SONAR_URL = 'http://sonarqube:9000'
     }
 
     stages {
@@ -34,11 +34,18 @@ pipeline {
 
         stage('4. SonarQube Analysis') {
             agent { 
-                // KORRIGIERT: 'FROM ' wurde entfernt
-                docker { image 'maven:3.9.16-eclipse-temurin-25-alpine' } 
+                docker { 
+                    image 'maven:3.9.16-eclipse-temurin-25-alpine'
+                    // WICHTIG: Verbindet den Maven-Container mit dem Docker-Netzwerk aus der docker-compose.yml
+                    args '--network sonar-net' 
+                }
             }
             steps {
-                sh "mvn sonar:sonar -Dsonar.host.url=${SONAR_URL}"
+                // Verbindet sich mit der in Jenkins hinterlegten SonarQube-Instanz
+                // Dadurch werden ${SONAR_URL} und das Token automatisch im Hintergrund gesetzt
+                withSonarQubeEnv('SonarQube-Local') {
+                    sh "mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqa_5d5e354f9cc798eec1283d48a874dc644317e2ed"
+                }
             }
         }
 
